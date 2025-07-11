@@ -51,10 +51,16 @@ if (-not (Test-Path $serverFile)) {
     Invoke-WebRequest -Uri $serverUrl -OutFile $serverFile
 }
 
-$cliFile    = Join-Path $OutDir "vscode-cli-alpine-x64-$Commit.tar.gz"
+$cliFile = Join-Path $OutDir "vscode-cli-alpine-x64-$Commit.tar.gz"
 if (-not (Test-Path $cliFile)) {
-    Write-Host "↓ VS Code CLI    → $cliFile"
+    Write-Host "↓ VS Code CLI → $cliFile"
     Invoke-WebRequest -Uri $cliUrl -OutFile $cliFile
 }
 
-Write-Host "`nDone.  Copy the two .tar.gz files under '$OutDir' to your offline server."
+# ── NEW: create the *.done* copy that the install script expects
+$cliDone = Join-Path $OutDir "vscode-cli-alpine-x64-$Commit.tar.gz.done"
+if (-not (Test-Path $cliDone)) {
+    Copy-Item $cliFile $cliDone
+}
+
+Write-Host "`nDone.  Copy everything under '$OutDir' to your air-gapped host."
